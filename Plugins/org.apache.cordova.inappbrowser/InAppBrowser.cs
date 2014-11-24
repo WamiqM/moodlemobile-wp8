@@ -232,14 +232,18 @@ namespace WPCordovaClassLib.Cordova.Commands
 #if WP8
         private async void ShowSystemBrowser(string url)
         {
-            var pathUri = new Uri(url, UriKind.Absolute);
+            url = url.Replace("x-wmapp0://", "");
+            url = url.Replace("/", "\\");
+
+            /*var pathUri = new Uri(filename, UriKind.Absolute);
+            Debug.WriteLine(pathUri);
             if (pathUri.Scheme == Uri.UriSchemeHttp || pathUri.Scheme == Uri.UriSchemeHttps)
             {
                 await Launcher.LaunchUriAsync(pathUri);
                 return;
-            }
+            }*/
 
-            var file = await GetFile(pathUri.AbsolutePath.Replace('/', Path.DirectorySeparatorChar));
+            var file = await GetFile(url);
             if (file != null)
             {
                 await Launcher.LaunchFileAsync(file);
@@ -248,6 +252,7 @@ namespace WPCordovaClassLib.Cordova.Commands
             {
                 Debug.WriteLine("File not found.");
             }
+
         }
 
         private async Task<StorageFile> GetFile(string fileName)
@@ -280,7 +285,6 @@ namespace WPCordovaClassLib.Cordova.Commands
         private void ShowInAppBrowser(string url)
         {
             Uri loc = new Uri(url, UriKind.RelativeOrAbsolute);
-
             Deployment.Current.Dispatcher.BeginInvoke(() =>
             {
                 if (browser != null)
